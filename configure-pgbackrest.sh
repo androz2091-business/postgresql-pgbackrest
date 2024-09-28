@@ -10,6 +10,9 @@ if [ -f /var/lib/postgresql/data/postgresql.conf ]; then
 
     pg_ctl reload
     echo "pgBackRest WAL archiving configured in postgresql.conf"
+
+    pgbackrest --stanza=my-pg-pgbackrest-stanza --log-level-console=info stanza-create
+    echo "pgBackRest stanza created"
 else
     echo "postgresql.conf not found, skipping configuration."
 fi
