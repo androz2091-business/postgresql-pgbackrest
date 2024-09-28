@@ -51,10 +51,11 @@ fi
 echo "pgBackRest config file created with the following settings:"
 cat /etc/pgbackrest/pgbackrest.conf # todo remove this
 
-# Configure PostgreSQL to use pgBackRest for WAL archiving
-sed -i "s/#archive_mode = off/archive_mode = on/" /var/lib/postgresql/data/postgresql.conf
-sed -i "s/#archive_command = ''/archive_command = 'pgbackrest --stanza=my-pg-pgbackrest-stanza archive-push %p'/" /var/lib/postgresql/data/postgresql.conf
-sed -i "s/#archive_timeout = 0/archive_timeout = 60/" /var/lib/postgresql/data/postgresql.conf
+# do this later, see configure-pgbackrest.sh
+# # Configure PostgreSQL to use pgBackRest for WAL archiving
+# sed -i "s/#archive_mode = off/archive_mode = on/" /var/lib/postgresql/data/postgresql.conf
+# sed -i "s/#archive_command = ''/archive_command = 'pgbackrest --stanza=my-pg-pgbackrest-stanza archive-push %p'/" /var/lib/postgresql/data/postgresql.conf
+# sed -i "s/#archive_timeout = 0/archive_timeout = 60/" /var/lib/postgresql/data/postgresql.conf
 
 echo "$PG_BACKREST_CRON_INCR_SCHEDULE pgbackrest --stanza=my-pg-pgbackrest-stanza --type=incr backup" >> /etc/crontab
 echo "$PG_BACKREST_CRON_FULL_SCHEDULE pgbackrest --stanza=my-pg-pgbackrest-stanza --type=full backup" >> /etc/crontab
