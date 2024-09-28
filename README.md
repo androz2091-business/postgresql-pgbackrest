@@ -27,3 +27,13 @@ PG_BACKREST_CRON_FULL_SCHEDULE="0 0 * * 0" # Sunday at midnight
 ### Known issues
 
 To enable WAL archiving, the script updates the `postgresql.conf` file and restarts the PostgreSQL service. What if some PostgreSQL instance use their own archiving or even their own `postgresql.conf` file as a `ConfigMap`? Will it be a conflict issue?
+
+### Debug locally
+
+```
+mkdir test
+mkdir test/data
+mkdir test/pgbackrest
+chown -R 999:999 test
+sudo docker build . -t pgbr && sudo docker run -e POSTGRES_PASSWORD=mysecretpassword -p 5435:5432 -v ./test/data:/var/lib/postgresql/data -v ./test/pgbackrest:/var/lib/pgbackrest pgbr
+```
