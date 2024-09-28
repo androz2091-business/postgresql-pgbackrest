@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # define environment variables for the local and s3 backup repositories
 PG_BACKREST_REPO_LOCAL_PATH=${PG_BACKREST_REPO_LOCAL_PATH:-/var/lib/pgbackrest}
 PG_BACKREST_REPO_LOCAL_RETENTION_FULL=${PG_BACKREST_REPO_LOCAL_RETENTION_FULL:-2}
@@ -47,7 +49,7 @@ EOF
 fi
 
 echo "pgBackRest config file created with the following settings:"
-cat /etc/pgbackrest/pgbackrest.conf
+cat /etc/pgbackrest/pgbackrest.conf # todo remove this
 
 # Configure PostgreSQL to use pgBackRest for WAL archiving
 sed -i "s/#archive_mode = off/archive_mode = on/" /var/lib/postgresql/data/postgresql.conf
