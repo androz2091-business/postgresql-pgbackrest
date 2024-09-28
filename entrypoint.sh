@@ -28,7 +28,7 @@ pg1-port=5432
 [global]
 repo1-path=$PG_BACKREST_REPO_LOCAL_PATH
 repo1-retention-full=$PG_BACKREST_REPO_LOCAL_RETENTION_FULL
-repo1-retention-incr=$PG_BACKREST_REPO_LOCAL_RETENTION_INCR
+repo1-retention-diff=$PG_BACKREST_REPO_LOCAL_RETENTION_INCR
 EOF
 
 if [ "$PG_BACKREST_REPO_S3_ENABLED" = "true" ]; then
@@ -43,7 +43,7 @@ repo2-s3-key=$PG_BACKREST_REPO_S3_KEY
 repo2-s3-key-secret=$PG_BACKREST_REPO_S3_KEY_SECRET
 repo2-s3-verify-tls=$PG_BACKREST_REPO_S3_VERIFY_TLS
 repo2-retention-full=$PG_BACKREST_REPO_S3_RETENTION_FULL
-repo2-retention-incr=$PG_BACKREST_REPO_S3_RETENTION_INCR
+repo2-retention-diff=$PG_BACKREST_REPO_S3_RETENTION_INCR
 EOF
     echo "S3 backup repository configured in /etc/pgbackrest/pgbackrest.conf"
 fi
@@ -59,7 +59,8 @@ cat /etc/pgbackrest/pgbackrest.conf # todo remove this
 
 echo "$PG_BACKREST_CRON_INCR_SCHEDULE pgbackrest --stanza=my-pg-pgbackrest-stanza --type=incr backup" >> /etc/crontab
 echo "$PG_BACKREST_CRON_FULL_SCHEDULE pgbackrest --stanza=my-pg-pgbackrest-stanza --type=full backup" >> /etc/crontab
-echo "Cron job created for pgBackRest backups with schedule: $PG_BACKREST_CRON_SCHEDULE"
+echo "Cron job created for pgBackRest incremental backups with schedule: $PG_BACKREST_CRON_INCR_SCHEDULE"
+echo "Cron job created for pgBackRest full backups with schedule: $PG_BACKREST_CRON_FULL_SCHEDULE"
 
 service cron start
 
