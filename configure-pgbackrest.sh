@@ -8,11 +8,14 @@ if [ -f /var/lib/postgresql/data/postgresql.conf ]; then
     sed -i "s/#archive_command = ''/archive_command = 'pgbackrest --stanza=my-pg-pgbackrest-stanza archive-push %p'/" /var/lib/postgresql/data/postgresql.conf
     sed -i "s/#archive_timeout = 0/archive_timeout = 60/" /var/lib/postgresql/data/postgresql.conf
 
-    pg_ctl reload
+    pg_ctl restart
     echo "pgBackRest WAL archiving configured in postgresql.conf"
 
     pgbackrest --stanza=my-pg-pgbackrest-stanza --log-level-console=info stanza-create
     echo "pgBackRest stanza created"
+
+    # create a backup immediately
+    pgbackrest --stanza=my-pg-pgbackrest-stanza --log-level-console=info --type=full backup
 else
     echo "postgresql.conf not found, skipping configuration."
 fi
