@@ -28,6 +28,12 @@ PG_BACKREST_CRON_FULL_SCHEDULE="0 0 * * 0" # Sunday at midnight
 
 To enable WAL archiving, the script updates the `postgresql.conf` file and restarts the PostgreSQL service. What if some PostgreSQL instance use their own archiving or even their own `postgresql.conf` file as a `ConfigMap`? Will it be a conflict issue?
 
+### Retention
+
+Full backup expires => all the incrementals/differentials that depend on it are expired too.
+Any backup not expired => full WAL archive is kept.
+Incremental backups can not be expired independently, they are always expired with the full/differential backup they depend on.
+
 ### Debug locally
 
 ```
