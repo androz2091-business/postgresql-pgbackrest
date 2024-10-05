@@ -67,4 +67,7 @@ service cron start
 # see https://github.com/docker-library/postgres/blob/c9906f922daaacdfc425b3b918e7644a8722290d/16/bookworm/Dockerfile#L192
 exec docker-entrypoint.sh postgres
 
+#sleep forever
+#while true; do sleep 1000; done
+
 # note: no need to "start" pgbackrest, as it is run as a cron job, it's not a continuously running service
