@@ -41,7 +41,7 @@ mkdir test
 mkdir test/data
 mkdir test/pgbackrest
 sudo chown -R 999:999 test
-sudo docker build . -t pgbr && sudo docker run -e POSTGRES_PASSWORD=mysecretpassword -p 5435:5432 -v ./test/data:/var/lib/postgresql/data -v ./test/pgbackrest:/var/lib/pgbackrest pgbr
+sudo docker build . -t pgbr && sudo docker run -e PG_BACKREST_REPO_LOCAL_ENABLED=true -e POSTGRES_PASSWORD=mysecretpassword -p 5435:5432 -v ./test/data:/var/lib/postgresql/data -v ./test/pgbackrest:/var/lib/pgbackrest pgbr
 ```
 ```
 sudo rm -rf test && mkdir test && mkdir test/data && mkdir test/pgbackrest && sudo chown -R 999:999 test
