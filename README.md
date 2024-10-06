@@ -45,6 +45,11 @@ sudo docker build . -t pgbr && sudo docker run -e PG_BACKREST_REPO_LOCAL_ENABLED
 ```
 ```
 sudo rm -rf test && mkdir test && mkdir test/data && mkdir test/pgbackrest && sudo chown -R 999:999 test
+```
+
+```
+sudo docker build . -t pgbr && sudo docker run -e PG_BACKREST_REPO_LOCAL_ENABLED=true -e POSTGRES_PASSWORD=mysecretpassword -e RESTORE_ENABLED=true -e RESTORE_TIMESTAMP="2024-10-06 17:33:27" -p 5435:5432 -v ./test/data:/var/lib/postgresql/data -v ./test/pgbackrest:/var/lib/pgbackrest pgbr
+```
 
 ```
 create table users_test (
