@@ -57,8 +57,6 @@ create table users_test (
 insert into users_test (user_id) values (1);
 ```
 
-todo autoriser postgres tmp
-
 ```
 pgbackrest --stanza=my-pg-pgbackrest-stanza --type=time --target="2024-10-05 12:53:55" restore
 ```
