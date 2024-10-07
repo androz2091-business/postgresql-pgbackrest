@@ -3,6 +3,8 @@
 RESTORE_ENABLED=${RESTORE_ENABLED:-false}
 RESTORE_TIMESTAMP=${RESTORE_TIMESTAMP:-""}
 
+QUIT_SHOW_REPO_INFO=${QUIT_SHOW_REPO_INFO:-false}
+
 # define environment variables for the local and s3 backup repositories
 PG_BACKREST_REPO_LOCAL_ENABLED=${PG_BACKREST_REPO_LOCAL_ENABLED:-true}
 PG_BACKREST_REPO_LOCAL_PATH=${PG_BACKREST_REPO_LOCAL_PATH:-/var/lib/pgbackrest}
@@ -20,6 +22,7 @@ PG_BACKREST_REPO_S3_VERIFY_TLS=${PG_BACKREST_REPO_S3_VERIFY_TLS:-y}
 PG_BACKREST_REPO_S3_RETENTION_FULL=${PG_BACKREST_REPO_S3_RETENTION_FULL:-2}
 PG_BACKREST_REPO_S3_RETENTION_INCR=${PG_BACKREST_REPO_S3_RETENTION_INCR:-7}
 PG_BACKREST_REPO_S3_PATH=${PG_BACKREST_REPO_S3_PATH:-"/"}
+PG_BACKREST_REPO_S3_URI_STYLE=${PG_BACKREST_REPO_S3_URI_STYLE:-path}
 
 PG_BACKREST_CRON_INCR_SCHEDULE=${PG_BACKREST_CRON_INCR_SCHEDULE:-"0 0 * * *"} # Every day at midnight
 PG_BACKREST_CRON_FULL_SCHEDULE=${PG_BACKREST_CRON_FULL_SCHEDULE:-"0 0 * * 0"} # Sunday at midnight
@@ -56,8 +59,10 @@ repo${repo_number}-s3-region=$PG_BACKREST_REPO_S3_REGION
 repo${repo_number}-s3-key=$PG_BACKREST_REPO_S3_KEY
 repo${repo_number}-s3-key-secret=$PG_BACKREST_REPO_S3_KEY_SECRET
 repo${repo_number}-s3-verify-tls=$PG_BACKREST_REPO_S3_VERIFY_TLS
+repo${repo_number}-s3-uri-style=$PG_BACKREST_REPO_S3_URI_STYLE
 repo${repo_number}-retention-full=$PG_BACKREST_REPO_S3_RETENTION_FULL
 repo${repo_number}-retention-diff=$PG_BACKREST_REPO_S3_RETENTION_INCR
+repo${repo_number}-bundle=y
 EOF
     echo "S3 backup repository configured in /etc/pgbackrest/pgbackrest.conf"
 fi
@@ -65,24 +70,42 @@ fi
 echo "pgBackRest config file created with the following settings:"
 cat /etc/pgbackrest/pgbackrest.conf # todo remove this
 
-# do this later, see configure-pgbackrest.sh
-# # Configure PostgreSQL to use pgBackRest for WAL archiving
-# sed -i "s/#archive_mode = off/archive_mode = on/" /var/lib/postgresql/data/postgresql.conf
-# sed -i "s/#archive_command = ''/archive_command = 'pgbackrest --stanza=my-pg-pgbackrest-stanza archive-push %p'/" /var/lib/postgresql/data/postgresql.conf
-# sed -i "s/#archive_timeout = 0/archive_timeout = 60/" /var/lib/postgresql/data/postgresql.conf
+if [ "$QUIT_SHOW_REPO_INFO" = "true" ]; then
+    date
+    pgbackrest --stanza=my-pg-pgbackrest-stanza info
+    exit 0
+fi
 
 if [ "$RESTORE_ENABLED" = "true" ]; then
     echo "Restoring database from backup"
-    if [ -z "$RESTORE_TIMESTAMP" ]; then
-        echo "RESTORE_TIMESTAMP is not set, cannot restore database"
+
+    if [ "$RESTORE_TYPE" = "timestamp" ]; then
+    
+        if [ -z "$RESTORE_TIMESTAMP" ]; then
+            echo "RESTORE_TIMESTAMP is required when RESTORE_TYPE is set to timestamp"
+            exit 1
+        fi
+
+        # first move the data directory to a temporary location
+        mkdir /var/lib/postgresql/data-tmp
+
+        # if no data directory exists, this will just throw an error, but that's fine
+        mv /var/lib/postgresql/data/* /var/lib/postgresql/data-tmp/
+        echo "Moved data directory to /var/lib/postgresql/data-tmp"
+
+        # then restore the database from the backup
+        pgbackrest --stanza=my-pg-pgbackrest-stanza --type=time --target="$RESTORE_TIMESTAMP" restore
+        echo "Database restored from backup"
+
+    elif [ "$RESTORE_TYPE" = "latest" ]; then
+
+        pgbackrest --stanza=my-pg-pgbackrest-stanza restore
+
+    else
+        echo "Invalid value for RESTORE_TYPE: $RESTORE_TYPE"
         exit 1
     fi
-    # first move the data directory to a temporary location
-    mkdir /var/lib/postgresql/data-tmp
-    mv /var/lib/postgresql/data/* /var/lib/postgresql/data-tmp/
-    echo "Moved data directory to /var/lib/postgresql/data-tmp"
-    # then restore the database from the backup
-    pgbackrest --stanza=my-pg-pgbackrest-stanza --type=time --target="$RESTORE_TIMESTAMP" restore
+  
     echo "Database restored from backup"
 fi
 

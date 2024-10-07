@@ -1,14 +1,34 @@
 # PostgreSQL PgBackRest
 
-## Environment Variables
+This repository contains the Dockerfile used to build a PostgreSQL image with [PgBackRest](https://pgbackrest.org/) backup tool.
+
+## Configuration
+
+The following environment variables are available. By default, the image should be run with `RESTORE_ENABLED=false`. It is going to start backing up the database, archiving the WAL and pushing them to the configured repositories.
+
+When starting the image with the same repositories and `RESTORE_ENABLED=true`, the image **WILL ERASE THE CURRENT CLUSTER** (if existing) and restore it to the specified timestamp (if a valid backup can be found).
+
+### Restore configuration
 
 ```bash
+RESTORE_ENABLED=false
+RESTORE_TYPE=timestamp
+RESTORE_TIMESTAMP="2024-10-06 17:33:27+00"
+# or you can use:
+#RESTORE_TYPE=latest
+```
+
+### Repositories configuration
+
+```bash
+PG_BACKREST_REPO_LOCAL_ENABLED=true
 PG_BACKREST_REPO_LOCAL_PATH=/var/lib/pgbackrest
-PG_BACKREST_REPO_LOCAL_RETENTION_FULL=2
-PG_BACKREST_REPO_LOCAL_RETENTION_INCR=7
+PG_BACKREST_REPO_LOCAL_RETENTION_FULL=2 # Number of full backups to keep
+PG_BACKREST_REPO_LOCAL_RETENTION_INCR=7 # Number of incremental backups to keep
 
 PG_BACKREST_REPO_S3_ENABLED=false
 # see " S3-Compatible Object Store Support" section of https://pgbackrest.org/user-guide.html
+# note: s3 uri style is path style
 PG_BACKREST_REPO_S3_TYPE=
 PG_BACKREST_REPO_S3_BUCKET=
 PG_BACKREST_REPO_S3_ENDPOINT=
@@ -26,15 +46,15 @@ PG_BACKREST_CRON_FULL_SCHEDULE="0 0 * * 0" # Sunday at midnight
 
 ### Known issues
 
-To enable WAL archiving, the script updates the `postgresql.conf` file and restarts the PostgreSQL service. What if some PostgreSQL instance use their own archiving or even their own `postgresql.conf` file as a `ConfigMap`? Will it be a conflict issue?
+To enable WAL archiving, the script updates the `postgresql.conf` file and restarts the PostgreSQL service. You can not use any other `archive_command` with this postgres image.
 
 ### Retention
 
-Full backup expires => all the incrementals/differentials that depend on it are expired too.
-Any backup not expired => full WAL archive is kept.
-Incremental backups can not be expired independently, they are always expired with the full/differential backup they depend on.
+The WAL is kept as long as a full backup is not expired. When a full backup expires, all the incrementals/differentials that depend on it are expired too. Incremental backups can not be expired independently, they are always expired with the full/differential backup they depend on.
 
 ### Debug locally
+
+Here are some useful debug commands when developing locally:
 
 ```
 mkdir test
