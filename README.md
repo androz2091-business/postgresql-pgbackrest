@@ -51,3 +51,7 @@ To enable WAL archiving, the script updates the `postgresql.conf` file and resta
 ### Retention
 
 The WAL is kept as long as a full backup is not expired. When a full backup expires, all the incrementals/differentials that depend on it are expired too. Incremental backups can not be expired independently, they are always expired with the full/differential backup they depend on.
+
+### Debug
+
+You can use the image with `QUIT_SHOW_REPO_INFO=true` to make it print the repositories information (it will list the backups) and exit.
