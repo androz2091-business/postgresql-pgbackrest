@@ -75,6 +75,7 @@ repo${repo_number}-s3-uri-style=$PG_BACKREST_REPO_S3_URI_STYLE
 repo${repo_number}-retention-full=$PG_BACKREST_REPO_S3_RETENTION_FULL
 repo${repo_number}-retention-diff=$PG_BACKREST_REPO_S3_RETENTION_INCR
 repo${repo_number}-bundle=y
+start-fast=y
 EOF
 
 if [ "$PG_BACKREST_CIPHER_ENABLED" = "true" ]; then
