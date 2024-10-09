@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PGDATA=${PGDATA:-/var/lib/postgresql/data}
+
 RESTORE_ENABLED=${RESTORE_ENABLED:-false}
 RESTORE_TIMESTAMP=${RESTORE_TIMESTAMP:-""}
 
@@ -35,7 +37,7 @@ FORCE_STANZA_CREATE=${FORCE_STANZA_CREATE:-false}
 
 cat > /etc/pgbackrest/pgbackrest.conf << EOF
 [my-pg-pgbackrest-stanza]
-pg1-path=/var/lib/postgresql/data/
+pg1-path=$PGDATA
 pg1-port=5432
 EOF
 
@@ -114,7 +116,7 @@ if [ "$RESTORE_ENABLED" = "true" ]; then
         mkdir /var/lib/postgresql/data-tmp
 
         # if no data directory exists, this will just throw an error, but that's fine
-        mv /var/lib/postgresql/data/* /var/lib/postgresql/data-tmp/
+        mv $PGDATA/* /var/lib/postgresql/data-tmp/
         echo "Moved data directory to /var/lib/postgresql/data-tmp"
 
         # then restore the database from the backup
