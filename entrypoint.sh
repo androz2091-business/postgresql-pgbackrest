@@ -143,7 +143,7 @@ echo "Cron job created for pgBackRest full backups with schedule: $PG_BACKREST_C
 service cron start
 
 if [ "$FORCE_STANZA_CREATE" = "true" ]; then
-    exec ./configure-pgbackrest.sh
+    exec /docker-entrypoint-initdb.d/configure-pgbackrest.sh
 fi
 
 # # see https://github.com/docker-library/postgres/blob/c9906f922daaacdfc425b3b918e7644a8722290d/16/bookworm/Dockerfile#L192
