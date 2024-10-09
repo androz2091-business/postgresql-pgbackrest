@@ -155,7 +155,7 @@ if [ "$FORCE_STANZA_CREATE" = "true" ]; then
     echo "Running configure-pgbackrest.sh"
     exec /docker-entrypoint-initdb.d/configure-pgbackrest.sh
 
-fi else
+else
     # see https://github.com/docker-library/postgres/blob/c9906f922daaacdfc425b3b918e7644a8722290d/16/bookworm/Dockerfile#L192
     exec docker-entrypoint.sh postgres
 fi
