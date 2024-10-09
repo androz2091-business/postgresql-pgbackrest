@@ -48,6 +48,10 @@ PG_BACKREST_CRON_INCR_SCHEDULE="0 0 * * *" # Every day at midnight
 PG_BACKREST_CRON_FULL_SCHEDULE="0 0 * * 0" # Sunday at midnight
 ```
 
+### k8s example configuration
+
+See [Androz2091/k8s-infrastructure](https://github.com/Androz2091/k8s-infrastructure/tree/main/cluster-manifests/db/postgres-pgbackrest). Check the commits history if the folder does not exist anymore when you are reading this.
+
 ### Known limitations
 
 #### Postgres data path
