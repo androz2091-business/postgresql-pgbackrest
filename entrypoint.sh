@@ -143,7 +143,7 @@ echo "Cron job created for pgBackRest full backups with schedule: $PG_BACKREST_C
 service cron start
 
 if [ "$FORCE_STANZA_CREATE" = "true" ]; then
-    docker-entrypoint.sh postgres &
+    su - postgres -c "docker-entrypoint.sh postgres" &
 
     # Wait for PostgreSQL to be ready
     until pg_isready -h localhost -p 5432 -d postgres; do
@@ -153,7 +153,7 @@ if [ "$FORCE_STANZA_CREATE" = "true" ]; then
 
     echo "PostgreSQL is up and running."
     echo "Running configure-pgbackrest.sh"
-    exec /docker-entrypoint-initdb.d/configure-pgbackrest.sh
+    exec /docker-entrypoint-initdb.d/configure-pgbackrest.sh postgres
 
 else
     # see https://github.com/docker-library/postgres/blob/c9906f922daaacdfc425b3b918e7644a8722290d/16/bookworm/Dockerfile#L192
