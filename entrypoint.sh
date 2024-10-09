@@ -44,8 +44,6 @@ repo1-path=$PG_BACKREST_REPO_LOCAL_PATH
 repo1-retention-full=$PG_BACKREST_REPO_LOCAL_RETENTION_FULL
 repo1-retention-diff=$PG_BACKREST_REPO_LOCAL_RETENTION_INCR
 EOF
-    echo "Local backup repository configured /etc/pgbackrest/pgbackrest.conf"
-fi
 
 if [ "$PG_BACKREST_CIPHER_ENABLED" = "true" ]; then
     cat >> /etc/pgbackrest/pgbackrest.conf << EOF
@@ -53,6 +51,8 @@ repo1-cipher-pass=${PG_BACKREST_CIPHER_PASS}
 repo1-cipher-type=${PG_BACKREST_CIPHER_TYPE}
 EOF
     echo "pgBackRest encryption enabled in repo1 (local) /etc/pgbackrest/pgbackrest.conf"
+fi
+    echo "Local backup repository configured /etc/pgbackrest/pgbackrest.conf"
 fi
 
 if [ "$PG_BACKREST_REPO_S3_ENABLED" = "true" ]; then
