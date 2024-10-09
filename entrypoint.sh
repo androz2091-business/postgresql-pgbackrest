@@ -31,9 +31,11 @@ PG_BACKREST_CIPHER_ENABLED=${PG_BACKREST_CIPHER_ENABLED:-false}
 PG_BACKREST_CIPHER_PASS=${PG_BACKREST_CIPHER_PASS:-""}
 PG_BACKREST_CIPHER_TYPE=${PG_BACKREST_CIPHER_TYPE:-"aes-256-cbc"}
 
+FORCE_STANZA_CREATE=${FORCE_STANZA_CREATE:-false}
+
 cat > /etc/pgbackrest/pgbackrest.conf << EOF
 [my-pg-pgbackrest-stanza]
-pg1-path=/var/lib/postgresql/data/pgdata
+pg1-path=/var/lib/postgresql/data/
 pg1-port=5432
 EOF
 
@@ -138,7 +140,9 @@ echo "Cron job created for pgBackRest full backups with schedule: $PG_BACKREST_C
 
 service cron start
 
-PGDATA=/var/lib/postgresql/data/pgdata
+if [ "$FORCE_STANZA_CREATE" = "true" ]; then
+    exec ./configure-pgbackrest.sh
+fi
 
 # # see https://github.com/docker-library/postgres/blob/c9906f922daaacdfc425b3b918e7644a8722290d/16/bookworm/Dockerfile#L192
 exec docker-entrypoint.sh postgres

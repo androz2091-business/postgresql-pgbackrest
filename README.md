@@ -46,6 +46,8 @@ PG_BACKREST_CIPHER_TYPE="aes-256-cbc"
 
 PG_BACKREST_CRON_INCR_SCHEDULE="0 0 * * *" # Every day at midnight
 PG_BACKREST_CRON_FULL_SCHEDULE="0 0 * * 0" # Sunday at midnight
+
+FORCE_STANZA_CREATE=false # if true, it will create a new stanza even it the Postgres database is already initialized
 ```
 
 ### k8s example configuration
@@ -53,10 +55,6 @@ PG_BACKREST_CRON_FULL_SCHEDULE="0 0 * * 0" # Sunday at midnight
 See [Androz2091/k8s-infrastructure](https://github.com/Androz2091/k8s-infrastructure/tree/main/cluster-manifests/db/postgres-pgbackrest). Check the commits history if the folder does not exist anymore when you are reading this.
 
 ### Known limitations
-
-#### Postgres data path
-
-Because `postgresql-pgbackrest` relies on the `initdb` Postgres command to create the stanza, the data path has been set to a subfolder `/var/lib/postgresql/data/db-files`. This is to avoid the `initdb` command to fail when the data path is not empty (when mounting a volume, there can be some `lost+found` inside the root data path).
 
 #### Encryption is the same for all repositories
 
