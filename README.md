@@ -40,11 +40,21 @@ PG_BACKREST_REPO_S3_RETENTION_FULL=
 PG_BACKREST_REPO_S3_RETENTION_INCR=
 PG_BACKREST_REPO_S3_PATH=
 
+PG_BACKREST_CIPHER_ENABLED=true
+PG_BACKREST_CIPHER_PASS="mysecretpassword"
+PG_BACKREST_CIPHER_TYPE="aes-256-cbc"
+
 PG_BACKREST_CRON_INCR_SCHEDULE="0 0 * * *" # Every day at midnight
 PG_BACKREST_CRON_FULL_SCHEDULE="0 0 * * 0" # Sunday at midnight
 ```
 
-### Known issues
+### Known limitations
+
+#### Encryption is the same for all repositories
+
+Atm, the image does not support different encryption keys for different repositories. If you need to use different keys, you should use different images.
+
+#### Only one archive command
 
 To enable WAL archiving, the script updates the `postgresql.conf` file and restarts the PostgreSQL service. You can not use any other `archive_command` with this postgres image.
 

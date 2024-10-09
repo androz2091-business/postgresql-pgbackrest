@@ -27,6 +27,10 @@ PG_BACKREST_REPO_S3_URI_STYLE=${PG_BACKREST_REPO_S3_URI_STYLE:-path}
 PG_BACKREST_CRON_INCR_SCHEDULE=${PG_BACKREST_CRON_INCR_SCHEDULE:-"0 0 * * *"} # Every day at midnight
 PG_BACKREST_CRON_FULL_SCHEDULE=${PG_BACKREST_CRON_FULL_SCHEDULE:-"0 0 * * 0"} # Sunday at midnight
 
+PG_BACKREST_CIPHER_ENABLED=${PG_BACKREST_CIPHER_ENABLED:-false}
+PG_BACKREST_CIPHER_PASS=${PG_BACKREST_CIPHER_PASS:-""}
+PG_BACKREST_CIPHER_TYPE=${PG_BACKREST_CIPHER_TYPE:-"aes-256-cbc"}
+
 cat > /etc/pgbackrest/pgbackrest.conf << EOF
 [my-pg-pgbackrest-stanza]
 pg1-path=/var/lib/postgresql/data
@@ -40,7 +44,15 @@ repo1-path=$PG_BACKREST_REPO_LOCAL_PATH
 repo1-retention-full=$PG_BACKREST_REPO_LOCAL_RETENTION_FULL
 repo1-retention-diff=$PG_BACKREST_REPO_LOCAL_RETENTION_INCR
 EOF
-    echo "Local backup repository configured in /etc/pgbackrest/pgbackrest.conf"
+    echo "Local backup repository configured /etc/pgbackrest/pgbackrest.conf"
+fi
+
+if [ "$PG_BACKREST_CIPHER_ENABLED" = "true" ]; then
+    cat >> /etc/pgbackrest/pgbackrest.conf << EOF
+repo1-cipher-pass=${PG_BACKREST_CIPHER_PASS}
+repo1-cipher-type=${PG_BACKREST_CIPHER_TYPE}
+EOF
+    echo "pgBackRest encryption enabled in repo1 (local) /etc/pgbackrest/pgbackrest.conf"
 fi
 
 if [ "$PG_BACKREST_REPO_S3_ENABLED" = "true" ]; then
@@ -64,6 +76,15 @@ repo${repo_number}-retention-full=$PG_BACKREST_REPO_S3_RETENTION_FULL
 repo${repo_number}-retention-diff=$PG_BACKREST_REPO_S3_RETENTION_INCR
 repo${repo_number}-bundle=y
 EOF
+
+if [ "$PG_BACKREST_CIPHER_ENABLED" = "true" ]; then
+    cat >> /etc/pgbackrest/pgbackrest.conf << EOF
+repo${repo_number}-cipher-pass=${PG_BACKREST_CIPHER_PASS}
+repo${repo_number}-cipher-type=${PG_BACKREST_CIPHER_TYPE}
+EOF
+    echo "pgBackRest encryption enabled in repo${repo_number} /etc/pgbackrest/pgbackrest.conf"
+fi
+
     echo "S3 backup repository configured in /etc/pgbackrest/pgbackrest.conf"
 fi
 
