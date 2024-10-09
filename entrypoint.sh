@@ -137,7 +137,7 @@ echo "Cron job created for pgBackRest full backups with schedule: $PG_BACKREST_C
 
 service cron start
 
-PG_DATA=/var/lib/postgresql/data/pgdata
+PGDATA=/var/lib/postgresql/data/pgdata
 
 # # see https://github.com/docker-library/postgres/blob/c9906f922daaacdfc425b3b918e7644a8722290d/16/bookworm/Dockerfile#L192
 exec docker-entrypoint.sh postgres
