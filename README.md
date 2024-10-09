@@ -46,8 +46,6 @@ PG_BACKREST_CIPHER_TYPE="aes-256-cbc"
 
 PG_BACKREST_CRON_INCR_SCHEDULE="0 0 * * *" # Every day at midnight
 PG_BACKREST_CRON_FULL_SCHEDULE="0 0 * * 0" # Sunday at midnight
-
-FORCE_STANZA_CREATE=false # if true, it will create a new stanza even it the Postgres database is already initialized
 ```
 
 ### k8s example configuration
