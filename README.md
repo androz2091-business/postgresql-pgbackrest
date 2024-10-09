@@ -50,6 +50,10 @@ PG_BACKREST_CRON_FULL_SCHEDULE="0 0 * * 0" # Sunday at midnight
 
 ### Known limitations
 
+#### Postgres data path
+
+Because `postgresql-pgbackrest` relies on the `initdb` Postgres command to create the stanza, the data path has been set to a subfolder `/var/lib/postgresql/data/db-files`. This is to avoid the `initdb` command to fail when the data path is not empty (when mounting a volume, there can be some `lost+found` inside the root data path).
+
 #### Encryption is the same for all repositories
 
 Atm, the image does not support different encryption keys for different repositories. If you need to use different keys, you should use different images.
