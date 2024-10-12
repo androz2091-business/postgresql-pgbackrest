@@ -140,6 +140,16 @@ echo "Cron job created for pgBackRest full backups with schedule: $PG_BACKREST_C
 
 service cron start
 
+if [ -f $PGDATA/postgresql.conf ]; then
+    sed -i "s/#archive_mode = off/archive_mode = on/" $PGDATA/postgresql.conf
+    sed -i "s/#archive_command = ''/archive_command = 'pgbackrest --stanza=my-pg-pgbackrest-stanza archive-push %p'/" $PGDATA/postgresql.conf
+    sed -i "s/#archive_timeout = 0/archive_timeout = 60/" $PGDATA/postgresql.conf
+
+    echo "postgresql.conf patched for WAL archiving before the server starts."
+else
+    echo "postgresql.conf not found, can not be patched for WAL archiving before the server starts."
+fi
+
 # see https://github.com/docker-library/postgres/blob/c9906f922daaacdfc425b3b918e7644a8722290d/16/bookworm/Dockerfile#L192
 exec docker-entrypoint.sh postgres
 
