@@ -1,3 +1,5 @@
+## ⚠️ MOVED TO https://gitlab.com/agepoly/it/dev/tools/postgres-pgbackrest ⚠️
+
 # PostgreSQL PgBackRest
 
 This repository contains the Dockerfile used to build a PostgreSQL image with [PgBackRest](https://pgbackrest.org/) backup tool.
